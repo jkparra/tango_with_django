@@ -1,0 +1,20 @@
+{% extends 'rango/base.html' %}
+{% load bootstrap_toolkit %}
+{% load bootstrap4 %}
+
+{% block block_title %}
+  Add Category
+{% endblock %}
+
+{% block body_block %}
+      <form id="category_form" method="post" class=form action="{% url 'rango:add_category' %}">
+        <!--importante es un token de seguridad manejado por django-->
+        <h2 class="form-signin-heading">Add a Category</a></h2>
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <br />
+        {% buttons %}
+        <button class="btn btn-primary" type="submit" name="submit">Create Category</button>
+        {% endbuttons %}
+      </form>
+{% endblock %}

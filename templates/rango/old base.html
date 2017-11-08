@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load rango_template_tags %}
+<html>
+<head>
+    <title>Rango -
+      {% block title_block %}
+      How to Tango with Django!
+      {% endblock %}
+    </title>
+  </head>
+  <body>
+
+    <div class="grid">
+      <div class="col-1-2">
+        <div class="content">
+    <!--specific content here-->
+            {% block body_block %}
+            This is the body block contents por default
+            {% endblock %}
+        </div>
+      </div>
+      <div class="col-1-2">
+        <div class="content">
+          <img src="{% static 'images/RANGOPICTURE.jpg' %}" alt="Picture of Rango" />
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div>
+      {% block sidebar_block %}
+        {% get_category_list category %}
+      {% endblock %}
+    </div>
+    <div>
+        <ul>
+          <li><a href ="{% url 'rango:about' %}">About</a></li>
+          <li><a href ="{% url 'rango:index' %}">Index </a></li>
+          {% if user.is_authenticated %}
+              <li><a href ="{% url 'rango:add_category' %}">Add new category </a></li>
+              <li><a href ="{% url 'rango:restricted' %}">Restricted Page</a></li>
+              <li><a href ="{% url 'auth_logout' %}?next=/rango/">Logout</a></li>
+          {% else %}
+              <li><a href ="{% url 'registration_register' %}">Sign Up</a></li>
+              <li><a href ="{% url 'auth_login' %}">Login</a></li>
+          {% endif %}
+        </ul>
+    </div>
+  </body>
+
+</html>
