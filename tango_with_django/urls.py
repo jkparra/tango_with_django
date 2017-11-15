@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^$',views.index,name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^rango/',include('rango.urls')),
+    url(r'^georef/',include('georef.urls')),
     #url(r'^accounts/register/$',MyRegistrationView.as_view(),name='registration_register'),
     url(r'^accounts/',include('registration.backends.simple.urls')),
     #above maps any urls mapping /rango to be manage by rango apps

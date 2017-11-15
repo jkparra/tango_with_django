@@ -43,7 +43,7 @@ SECRET_KEY = 'jy^&$d_yk37!+i84ii^if%4!%ksq=sld+#3=-ir=(+*3!mqh5&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.8','127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.8','127.0.0.1','jkparra.pythonanywhere.com']
 
 
 # Application definition
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rango',
+    'georef',
     'registration',
     'bootstrap_toolkit',
     'bootstrap4',

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load rango_template_tags %}
+<html>
+<head>
+      {% block title_block %}
+      How to Tango with Django!
+      {% endblock %}
+  </head>
+  <body>
+
+    <div>
+      <div>
+        <div>
+    <!--specific content here-->
+            {% block body_block %}
+            This is the body block contents por default
+            {% endblock %}
+        </div>
+      </div>
+    </div>
+    <div>
+      {% block sidebar_block %}
+      {% endblock %}
+    </div>
+    <div>
+        <ul>
+        </ul>
+    </div>
+  </body>
+
+</html>
