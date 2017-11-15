@@ -5,7 +5,13 @@ django-bootstrap-toolkit==2.15.0
 django-bootstrap4==0.0.4
 django-forms-bootstrap==3.1.0
 django-registration-redux==1.8
+geojson==2.3.0
+numpy==1.13.3
 olefile==0.44
+pandas==0.21.0
 Pillow==4.2.1
+python-dateutil==2.6.1
 pytz==2017.2
+six==1.11.0
 wincertstore==0.2
+xlrd==1.1.0
