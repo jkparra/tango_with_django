@@ -1,5 +1,5 @@
-from django.db import models
 
+from django.db import models
 # Create your models here.
 class Programa (models.Model):
     codigo=models.IntegerField (primary_key=True)
@@ -12,6 +12,7 @@ class Programa (models.Model):
 class Vendedor(models.Model):
     codigo=models.IntegerField(primary_key=True)
     nombre=models.CharField(max_length=75)
+    color=models.CharField(max_length=20,default="Black")
     programa=models.ForeignKey(Programa)
     class Meta:
         verbose_name_plural="Vendedores"
@@ -25,6 +26,11 @@ class Tienda(models.Model):
     coordenadas=models.CharField(max_length=40)
     latitud=models.CharField(max_length=20,default="0")
     longitud=models.CharField(max_length=20,default="0")
+    compra_otc=models.CharField(max_length=20,default="NO")
+    compra_blanqueador=models.CharField(max_length=20,default="NO COMPRA")
+    compra_aditivo=models.CharField(max_length=20,default="NO COMPRA")
+    compra_mensual=models.FloatField(default=0)
+    compra_reciente=models.CharField(max_length=20,default="NO")
     programa=models.ForeignKey(Programa)
     vendedor=models.ForeignKey(Vendedor)
     def __str__(self):

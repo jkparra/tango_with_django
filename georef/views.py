@@ -28,6 +28,17 @@ def indice (request):
                 listado=listado.filter(vendedor=vend)
             if cd.get("localidad")!='0':
                 listado=listado.filter(localidad=cd.get("localidad"))
+            if cd.get("compra_reciente")!='0':
+                listado=listado.filter(compra_reciente=cd.get("compra_reciente"))
+            if cd.get("compra_otc")!='0':
+                listado=listado.filter(compra_otc=cd.get("compra_otc"))
+            if cd.get("compra_blanqueador")!='0':
+                listado=listado.filter(compra_blanqueador=cd.get("compra_blanqueador"))
+            if cd.get("compra_aditivo")!='0':
+                listado=listado.filter(compra_aditivo=cd.get("compra_aditivo"))
+
+
+
             #lista_tiendas=Tienda.objects.filter(localidad=cd.get("localidad"),programa=prog,vendedor=vend).all()[:]
             lista_tiendas=listado[:]
             lat_mapa=prog.latitud
@@ -41,7 +52,9 @@ def indice (request):
     lista_puntos=[]
     for t in lista_tiendas[:]:
         punto=Point((float(t.longitud),float(t.latitud)))
-        feat=Feature(geometry=punto,properties={"codigo":t.codigo,"vendedor":t.vendedor.codigo})
+        feat=Feature(geometry=punto,properties={"codigo":t.codigo,
+                                                "vendedor":t.vendedor.codigo,
+                                                "color":t.vendedor.color})
         lista_puntos.append(feat)
     gc=FeatureCollection(lista_puntos)
     gc["type"]="FeatureCollection"
@@ -59,19 +72,36 @@ class FiltrarTiendasForm(forms.Form):
     opciones_vendedor=list(Vendedor.objects.values_list("codigo","nombre").distinct())
     opciones_vendedor.append((0,"Todos"))
     opciones_localidad=list(Tienda.objects.values_list("localidad","localidad").distinct())
+    opciones_compra_otc=[("SI","SI"),("NO","NO"),(0,"Todos")]
+    #opciones_compra_otc=list(Tienda.objects.values_list("compra_otc","compra_otc").distinct())
+    opciones_compra_blanqueador=[("BOT BL","BOT BL"),("CAJA BL","CAJA BL"),("NO COMPRA","NO COMPRA"),(0,"Todos")]
+    #opciones_compra_blanqueador=list(Tienda.objects.values_list("compra_blanqueador","compra_blanqueador").distinct())
+    opciones_compra_aditivo=[("BOT AD","BOT AD"),("CAJA AD","CAJA AD"),("NO COMPRA","NO COMPRA"),(0,"Todos")]
+    #opciones_compra_aditivo=list(Tienda.objects.values_list("compra_aditivo","compra_aditivo").distinct())
+    opciones_compra_reciente=[("SI","SI"),("NO","NO"),(0,"Todos")]
+    #opciones_compra_reciente=list(Tienda.objects.values_list("compra_reciente","compra_reciente").distinct())
+    #opciones.compra_reciente.append((0,"Todos"))
+
+
     opciones_localidad.append((0,"Todas"))
     print(f"opciones... {opciones_vendedor}")
     #opciones_programa=((3, "TAT CALI"),(5,"TAT PEREIRA"))
     #opciones_vendedor=((1300,"VENDEDOR 1"),(1302,"VENDEDOR 2"))
     #opciones_localidad=((1,"santa rosa"),(2,"la virginia"))
-    programa=forms.ChoiceField(choices=opciones_programa,required=False,initial=cod_programa_default)
-    vendedor=forms.ChoiceField(choices=opciones_vendedor,required=False,initial=0)
-    localidad=forms.ChoiceField(choices=opciones_localidad,required=False,initial=0)
+    programa=forms.ChoiceField(choices=opciones_programa,required=False,initial=cod_programa_default,help_text="Programa")
+    vendedor=forms.ChoiceField(choices=opciones_vendedor,required=False,initial=0,help_text="Vendedor ")
+    localidad=forms.ChoiceField(choices=opciones_localidad,required=False,initial=0,help_text="Localidad ")
+    compra_otc=forms.ChoiceField(choices=opciones_compra_otc,required=False,initial=0,help_text="Compra OTC ")
+    compra_reciente=forms.ChoiceField(choices=opciones_compra_reciente,required=False,initial=0,help_text="Compra Ult meses")
+    compra_aditivo=forms.ChoiceField(choices=opciones_compra_aditivo,required=False,initial=0,help_text="Compra Aditivo")
+    compra_blanqueador=forms.ChoiceField(choices=opciones_compra_blanqueador,required=False,initial=0,help_text="Compra Blanqueador")
+
+
     #    largo=Tienda._meta.get_field("nombre").max_length
     #    largourl=Page._meta.get_field("url").max_length
 
-    #    title=forms.CharField(max_length=largo,help_text="Please enter title of the page")
-    #    url=forms.URLField(max_length=largourl,help_text="Please enter the URL of the page")
+    #    title=forms.CharField(max_length=largo,help_text="Plearecienteenter title of the page")
+    #    urRLField(max_length=largourl,help_text="Please enter the URL of the page")
     #    codigo=forms.IntegerField()
     #    nombre=forms.Charfield(max_length=largo,help_text="Nombre")
 

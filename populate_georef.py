@@ -4,19 +4,23 @@ import pandas as pd
 import django
 django.setup()
 from georef.models import Vendedor, Tienda, Programa, ApiKeys
+from django.core.exceptions import ObjectDoesNotExist
+import math
+from django.db import transaction
 
 def populate():
-    df=pd.read_excel('datos_georef.xlsx',sheet_name="programa")
-    add_programa(df)
+    #df=pd.read_excel('datos_georef.xlsx',sheet_name="programa")
+    #add_programa(df)
     chequear_programa()
     df=pd.read_excel('datos_georef.xlsx',sheet_name="vendedor")
     add_vendedor(df)
     chequear_vendedor()
-    df=pd.read_excel('datos_georef.xlsx',sheet_name="tienda")
-    add_tienda(df)
-    chequear_tienda()
-    add_key()
-    chequear_key()
+    #df=pd.read_excel('datos_georef.xlsx',sheet_name="tienda")
+    #add_tienda(df)
+    #completar_tienda(df)
+    #chequear_tienda()
+    #add_key()
+    #chequear_key()
 
 
 
@@ -27,20 +31,25 @@ def add_programa(df):
         p.longitud=df['coordenadas'][i].split(',')[1]
         p.save()
 
+@transaction.atomic
 def add_vendedor(df):
     for i in df.index:
-        p=Programa.objects.get_or_create(codigo=df['programa'][i])[0]
-        v=Vendedor.objects.get_or_create(codigo=df['codigo'][i],nombre=df['nombre'][i],programa=p)[0]
-        v.save()
+        print(f"{i},{df['nombre']}")
+        if not math.isnan(df['codigo'][i]):
+            p=Programa.objects.get_or_create(codigo=df['programa'][i])[0]
+            v=Vendedor.objects.get_or_create(codigo=df['codigo'][i],programa=p)[0]
+            v.color=df['color'][i]
+            v.nombre=df['nombre'][i]
+            v.save()
 
+@transaction.atomic
 def add_tienda(df):
     for i in df.index:
-        print(f"i {i} {df['programa'][i]}")
-
+        print(f"i {i} {df['codigo'][i]}")
         p=Programa.objects.get(codigo=df['programa'][i])
-        print(f"p {p}")
+        #print(f"p {p}")
         v=Vendedor.objects.get(codigo=df['vendedor'][i])
-        print(f"v {v}")
+        #print(f"v {v}")
         lat=df['coordenadas'][i].split(",")[0]
         lng=df['coordenadas'][i].split(",")[1]
         #print(f"latitud {lat} longitud {lng}")
@@ -56,7 +65,7 @@ def add_tienda(df):
         lng=t.coordenadas.split(",")[1]
         t.latitud=lat
         t.longitud=lng
-        print("listo para salvar")
+        #print("listo para salvar")
         t.save()
 
 def add_key():
@@ -82,6 +91,17 @@ def chequear_key():
     for x in k:
         print (x)
 
+def is_float(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+def chequear_coordenadas_malas(x):
+    if not is_float(x.latitud) or not is_float(x.longitud):
+        print (f"{x.codigo} {x.latitud} {x.longitud}")
+        x.delete()
 
 def completar_coordenadas():
     t=Tienda.objects.all()
@@ -92,8 +112,28 @@ def completar_coordenadas():
         x.latitud=lat
         x.longitud=lng
         x.save()
+
+@transaction.atomic
+def completar_tienda(df):
+
+    for i in df.index:
+        #print(f"compra mensual {df['compra_mensual'][i]}")
+        t=Tienda.objects.get(codigo=df["codigo"][i])
+        t.compra_otc=df["compra_otc"][i]
+        t.compra_blanqueador=df["compra_blanqueador"][i]
+        t.compra_aditivo=df["compra_aditivo"][i]
+        if not math.isnan(df["compra_mensual"][i]):
+            t.compra_mensual=df["compra_mensual"][i]
+        t.compra_reciente=df["compra_reciente"][i]
+        t.save()
+        print(f"compra mensual {i} {t.compra_mensual}")
+
+
 #start execution here!
 populate()
 #completar_coordenadas()
 #df=pd.read_excel('datos_georef.xlsx',sheet_name="programa")
 #add_programa(df)
+#chequear_coordenadas_malas()
+#df=pd.read_excel('datos_georef.xlsx',sheet_name="tienda")
+#completar_tienda(df)

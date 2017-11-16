@@ -47,21 +47,38 @@
       window.eqfeed_callback = function(results) {
         for (var i = 0; i < results.features.length; i++) {
           var coords = results.features[i].geometry.coordinates;
+          var color=results.features[i].properties.color;
+          var titulo=results.features[i].properties.codigo;
           var latLng = new google.maps.LatLng(coords[1],coords[0]);
           var marker = new google.maps.Marker({
             position: latLng,
             map: map,
-
+            title:titulo,
+            icon: customIcon({
+                fillColor: color,
+            }),
           });
         }
       }
+    function customIcon (opts) {
+      return Object.assign({
+      path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+      fillColor: '#34495e',
+      fillOpacity: 1,
+      strokeColor: '#000',
+      strokeWeight: 2,
+      scale: 1,
+      }, opts);
+    }
     </script>
     <form id="page_form" method="post" action="{% url 'georef:indice' %}">
     <ul>
       {% csrf_token %}
-      {{ forma.as_p }}
-      {{ forma.errors }}
-      {{ forma.non_field_errors }}
+      {% for field in forma.visible_fields %}
+          <li>
+            {{ field.help_text }}{{ field }}
+          </li>
+      {% endfor %}
       <input type="submit" name="submit" value="Filtrar Datos" />
     </ul>
   <script
