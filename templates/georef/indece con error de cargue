@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load js %}
+<html>
+  <head>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      #legend {
+        font-family: Arial, sans-serif;
+        background:Azure; /*#fff;*/
+        padding: 10px;
+        margin: 10px;
+        border: 3px solid #000;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 80%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="legend"><h3>Legend</h3></div>
+    <script>
+      var map;
+      var opciones={{ lista_vendedores | js }};
+      var centroPrograma = {lat:JSON.parse("{{ lat | escapejs }}"), lng:JSON.parse("{{ lng | escapejs }}") };
+      var prueba={{ geojson_tiendas | js }};
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: centroPrograma,
+          mapTypeId: 'hybrid'
+        });
+        //map.data="{{ lista_puntos|safe }}"
+        // Create a <script> tag and set the USGS URL as the source.
+
+        var prueba_script=document.createElement('script');
+        prueba_script.text={{ geojson_tiendas | js }};
+        //document.write(prueba_script.text)
+        //var script = document.createElement('script');
+        // This example uses a local copy of the GeoJSON stored at
+        // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
+
+        //script.src = "{% static 'info_tiendas.js' %}";
+        document.getElementsByTagName('head')[0].appendChild(prueba_script);
+      }
+
+      // Loop through the results array and place a marker for each
+      // set of coordinates.
+
+      window.eqfeed_callback = function(results) {
+        for (var i = 0; i < results.features.length; i++) {
+          var coords = results.features[i].geometry.coordinates;
+          var color=results.features[i].properties.color;
+          var titulo=results.features[i].properties.codigo.toString();
+          var contenido=  '<div id="IW">'+'<ul>'+
+              '<li>'+'Codigo'+ results.features[i].properties.codigo.toString()+'</li>'+
+                          '</ul>'+'</div>'
+          var latLng = new google.maps.LatLng(coords[1],coords[0]);
+          var marker = new google.maps.Marker({
+            position: latLng,
+            map: map,
+            title:titulo,
+            infowindow: new google.maps.InfoWindow({content:contenido}),
+            icon: customIcon({
+                fillColor: color,
+            }),
+          });
+          google.maps.event.addListener(marker, 'click', function() {
+              this.infowindow.open(map, this);
+          });
+        }
+        var legend = document.getElementById('legend');
+        var div = document.createElement('table');
+        div.innerHTML ="<tr><td>Cod.Vendedor</td><td></td></tr>";
+        legend.appendChild(div);
+        var i =0;
+        for (i=0;i<opciones.length;i++) {
+            div = document.createElement('tr');
+            div.innerHTML = "<td>" + opciones[i].codigo + ' </td><td><span style="background-color:black;color:' + opciones[i].color + '"> &#9608&#9608 </span></td>' ;
+            legend.appendChild(div);
+          };
+        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+    }
+
+    function customIcon (opts) {
+      return Object.assign({
+      path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+      fillColor: '#34495e',
+      fillOpacity: 1,
+      strokeColor: '#000',
+      strokeWeight: 1,
+      scale: 0.5,
+      }, opts);
+    }
+    </script>
+    <form id="page_form" method="post" action="{% url 'georef:indice' %}">
+    <ul>
+      {% csrf_token %}
+      {% for field in forma.visible_fields %}
+          <li>
+            {{ field.help_text }}{{ field }}
+          </li>
+      {% endfor %}
+      <input type="submit" name="submit" value="Filtrar Datos" />
+    </ul>
+    <script>
+
+      var campo_programa = document.getElementById("id_programa");
+      var programa_seleccionado = campo_programa.options[campo_programa.selectedIndex].value;
+      var opciones_vendedores = {{opciones_vendedores | js }};
+      var opcion_vendedor=opciones_vendedores[programa_seleccionado];
+      campo_vendedor=document.getElementById('id_vendedor');
+      while(campo_vendedor.firstChild){
+        campo_vendedor.removeChild(campo_vendedor.firstChild);
+      }
+      for (i=0;i<opcion_vendedor.length;i++) {
+
+            opcion = document.createElement('option');
+            opcion.value=opcion_vendedor[i].codigo
+            opcion.text = opcion_vendedor[i].nombre ;
+            campo_vendedor.add(opcion);
+          };
+
+
+
+
+
+    </script>
+
+    <script
+    src= {{ url_script | js }} >
+    </script>
+  </body>
+</html>

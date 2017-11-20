@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load js %}
+<meta charset="ISO-8859-1">
+<html>
+<head>
+  <title>Test</title>
+  <style>
+    h1 {
+      text_align:center;
+    }
+    table{
+      border:1px solid;
+      margin:0 auto;
+      width:70%;
+    }
+    td,th {
+      text_align:center;
+      border:1 px solid;
+
+    }
+  </style>
+</head>
+<body>
+  <h1>Lista de vendedores</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Programa</th>
+          <th>Codigo</th>
+          <th>Nombre</th>
+          <th>Color</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for persona in vendedor %}
+        <tr>
+          <td>{{ persona.programa }}</td>
+          <td>{{ persona.codigo }}</td>
+          <td>{{ persona.nombre }}</td>
+          <td>{{ persona.color }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+  </html>

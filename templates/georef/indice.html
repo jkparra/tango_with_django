@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-
+{% load js %}
 <html>
   <head>
     <style>
@@ -8,6 +8,13 @@
        * element that contains the map. */
       #map {
         height: 100%;
+      }
+      #legend {
+        font-family: Arial, sans-serif;
+        background:Azure; /*#fff;*/
+        padding: 10px;
+        margin: 10px;
+        border: 3px solid #000;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -19,6 +26,7 @@
   </head>
   <body>
     <div id="map"></div>
+    <div id="legend"><h3>Legend</h3></div>
     <script>
       var map;
       var centroPrograma = {lat:JSON.parse("{{ lat|escapejs }}") , lng:JSON.parse("{{ lng|escapejs }}") };
@@ -39,6 +47,18 @@
         // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
 
         //script.src = "{% static 'info_tiendas.js' %}";
+        var opciones={{ lista_vendedores | js }};
+        var legend = document.getElementById('legend');
+        var div = document.createElement('table');
+        div.innerHTML ="<tr><td>Cod.Vendedor</td><td></td></tr>";
+        legend.appendChild(div);
+        var i =0;
+        for (i=0;i<opciones.length;i++) {
+            div = document.createElement('tr');
+            div.innerHTML = "<td>" + opciones[i].codigo + ' </td><td><span style="background-color:black;color:' + opciones[i].color + '"> &#9608&#9608 </span></td>' ;
+            legend.appendChild(div);
+          };
+        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
         document.getElementsByTagName('head')[0].appendChild(prueba_script);
       }
 
@@ -66,8 +86,8 @@
       fillColor: '#34495e',
       fillOpacity: 1,
       strokeColor: '#000',
-      strokeWeight: 2,
-      scale: 1,
+      strokeWeight: 1,
+      scale: 0.5,
       }, opts);
     }
     </script>
@@ -81,6 +101,34 @@
       {% endfor %}
       <input type="submit" name="submit" value="Filtrar Datos" />
     </ul>
+    <script>
+
+      /*  FORMA PARA CREAR UN MENU VARIABLE SIN EMBARGO, ES MEJOR TRABAJAR CON UNA ESTRUCTURA DONDE SE
+      FIJE  todo DESDE LA DIRECCION WEB Y TRABAJARLO DE TAL FORMA QUE FIJE LOS DATOS A SOLICITAR
+      PARA QUE EL MENU NO SEA DINAMICO EN EL CLIENTE Y PODERLO TRABAJAR todo DESDE DJANGO
+
+      var campo_programa = document.getElementById("id_programa");
+      //var programa_seleccionado = campo_programa.options[campo_programa.selectedIndex].value;
+      var opciones_vendedores = {{opciones_vendedores | js }};
+      var opcion_vendedor=opciones_vendedores[programa_seleccionado];
+      campo_vendedor=document.getElementById('id_vendedor');
+      while(campo_vendedor.firstChild){
+        campo_vendedor.removeChild(campo_vendedor.firstChild);
+      }
+      for (i=0;i<opcion_vendedor.length;i++) {
+
+            opcion = document.createElement('option');
+            opcion.value=opcion_vendedor[i].codigo
+            opcion.text = opcion_vendedor[i].nombre ;
+            campo_vendedor.add(opcion);
+          };
+
+          */
+
+
+
+    </script>
+
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBckQmYAj27KJOcRLaXEWnhgrliapEFh14&callback=initMap" >
     </script>
