@@ -20,7 +20,7 @@ from reportlab.pdfgen import canvas
 from django.template.loader import render_to_string
 from weasyprint import HTML
 import tempfile
-
+import os
 
 
 
@@ -184,8 +184,15 @@ def ensayopdf2(request):
     vendedor=Vendedor.objects.values('programa','codigo','nombre','color').order_by('codigo')
     #rendered
     html_string=render_to_string('georef/generate_pdf.html',{'vendedor':vendedor})
-    print(html_string)
+
+    print(f"request build_absolute_uri: {request.build_absolute_uri()}")
+    #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    #STATIC_DIR2= os.path.join(BASE_DIR,'static')
+
     html=HTML(string=html_string,base_url=request.build_absolute_uri())
+    #html=HTML(string=html_string,base_url=STATIC_DIR2)
+
     result=html.write_pdf()
     #creating http response
     response=HttpResponse(content_type='application/pdf;')
