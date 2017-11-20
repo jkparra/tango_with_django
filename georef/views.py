@@ -42,7 +42,6 @@ def indice (request):  #forma de tener un dropdown dinamico manejado por java sc
     prog=Programa.objects.get(codigo=cod_programa_default)
     lat_mapa=prog.latitud
     lng_mapa=prog.longitud
-    print(f"request method {request.POST['programa']}")
     if request.method=="POST":
         forma= FiltrarTiendasForm(request.POST,codigo_programa=request.POST['programa'][0])
         print(forma.errors)
@@ -82,7 +81,7 @@ def indice (request):  #forma de tener un dropdown dinamico manejado por java sc
             #json_lista_vendedores=js|0(lista_vendedores)
 
     else:
-        forma=FiltrarTiendasForm()
+        forma=FiltrarTiendasForm(codigo_programa=cod_programa_default)
 
     clave=ApiKeys.objects.filter(tipo="maps").values('clave')[0]["clave"]
     url_script="https://maps.googleapis.com/maps/api/js?key=" + clave + "&callback=initMap"
