@@ -22,12 +22,6 @@ from weasyprint import HTML
 import tempfile
 
 
-#para ensayopdf3
-import cStringIO as StringIO
-from xhtml2pdf import pisa
-from django.template.loader import get_template
-from django.template import Context
-from cgi import escape
 
 
 
@@ -208,18 +202,3 @@ def ensayopdf21(request):
     vendedor=Vendedor.objects.values('programa','codigo','nombre','color').order_by('codigo')
     print(vendedor)
     return render(request,'georef/generate_pdf.html',context={'vendedor':vendedor})
-
-def render_to_pdf(template_src,context_dict):
-    template=get_template(template_src)
-    context=Context(context_dict)
-    html=template.render(context)
-    result=StringIO.StringIO()
-    pdf=pisa.pisaDocument(StringIO.StringIO()(html.encode()),result)
-    if not pdf.err:
-        return HttpResponse(result.getvalue(),content_type="application/pdf")
-    return HttpResponse('We had some errors <pre>%s</pre>'% escape(html))
-
-def ensayopdf3(request):
-    vendedor=Vendedor.objects.values('programa','codigo','nombre','color').order_by('codigo')
-
-    return render_to_pdf('georef/generate_pdf.html',{'pagesize':'A4','vendedor':vendedor})
