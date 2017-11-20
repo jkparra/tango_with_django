@@ -186,7 +186,7 @@ def ensayopdf2(request):
     #rendered
     html_string=render_to_string('georef/generate_pdf.html',{'vendedor':vendedor})
     print(html_string)
-    html=HTML(string=html_string)
+    html=HTML(string=html_string,base_url=request.build_absolute_uri())
     result=html.write_pdf()
     #creating http response
     response=HttpResponse(content_type='application/pdf;')

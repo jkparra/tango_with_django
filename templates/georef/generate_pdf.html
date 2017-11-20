@@ -6,13 +6,19 @@
 <head>
   <title>Test</title>
   <style>
+    @page {
+      size: 11in 8.5in;
+      margin: 5mm 5mm 5mm 5mm;
+    }
     h1 {
       text_align:center;
     }
+    body{font-size: 8px;}
     table{
       border:1px solid;
       margin:0 auto;
-      width:70%;
+      width:100%;
+      text_align:center;
     }
     td,th {
       text_align:center;
@@ -20,6 +26,7 @@
 
     }
   </style>
+  <img src="{% static 'images/RANGOPICTURE.jpg' %}"  class="img-responsive" alt="Picture of Rango" />
 </head>
 <body>
   <h1>Lista de vendedores</h2>
@@ -43,5 +50,6 @@
         {% endfor %}
       </tbody>
     </table>
+
   </body>
   </html>
